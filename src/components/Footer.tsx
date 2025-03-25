@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onHowToPlayClick: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onHowToPlayClick }) => {
   return (
     <footer className="w-full bg-gray-900/50 backdrop-blur-sm border-t border-gray-700/50">
       <div className="max-w-[2000px] mx-auto py-6 px-8">
@@ -57,7 +61,14 @@ export const Footer: React.FC = () => {
 
           {/* Additional Links */}
           <div className="flex flex-col items-center lg:items-end space-y-2">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">How to Play</a>
+            <a 
+              onClick={onHowToPlayClick}
+              className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              role="button"
+              aria-label="Toggle how to play instructions"
+            >
+              How to Play
+            </a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors">About</a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a>
           </div>
