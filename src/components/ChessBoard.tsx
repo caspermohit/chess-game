@@ -15,49 +15,48 @@ interface GameNotification {
 }
 
 export const ChessBoard: React.FC<ChessBoardProps> = ({ game, onMove }) => {
-  const [possibleMoves, setPossibleMoves] = useState<string[]>([]);
   const [selectedPiece, setSelectedPiece] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [possibleMoves, setPossibleMoves] = useState<string[]>([]);
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null);
-  const [notification, setNotification] = useState<GameNotification>({ text: '', color: '', show: false });
+  const [notification, setNotification] = useState<GameNotification>({
+    text: '',
+    color: 'text-white',
+    show: false
+  });
   const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   const handlePieceSelect = (position: string) => {
     const moves = game.moves({ square: position as ChessSquare, verbose: true });
     setSelectedPiece(position);
     setPossibleMoves(moves.map(move => move.to));
-    setErrorMessage(null);
   };
 
   const handleDrop = (from: string, to: string) => {
     try {
-      const newGame = new Chess(game.fen());
-      const move = newGame.move({
-        from,
-        to,
+      const move = game.move({
+        from: from as ChessSquare,
+        to: to as ChessSquare,
         promotion: 'q'
       });
-      
+
       if (move) {
-        onMove(newGame);
+        onMove(game);
         setPossibleMoves([]);
         setSelectedPiece(null);
-        setErrorMessage(null);
         setLastMove({ from, to });
 
         // Show appropriate notification
-        if (newGame.isCheckmate()) {
+        if (game.isCheckmate()) {
           showNotification('Checkmate!', 'text-red-500');
-        } else if (newGame.isDraw()) {
+        } else if (game.isDraw()) {
           showNotification('Draw!', 'text-blue-500');
-        } else if (newGame.isCheck()) {
+        } else if (game.isCheck()) {
           showNotification('Check!', 'text-yellow-500');
         }
       }
     } catch (error) {
       console.error('Invalid move:', error);
       showNotification('Invalid move!', 'text-red-500');
-      setTimeout(() => setErrorMessage(null), 2000);
     }
   };
 
