@@ -13,7 +13,7 @@ interface DragItem {
 }
 
 export const Piece: React.FC<PieceProps> = ({ piece, position }) => {
-  const [{ isDragging }, dragRef] = useDrag<DragItem, void, { isDragging: boolean }>(() => ({
+  const [{ isDragging }, drag] = useDrag<DragItem, void, { isDragging: boolean }>(() => ({
     type: 'piece',
     item: { type: 'piece', position, piece },
     collect: (monitor) => ({
@@ -30,9 +30,16 @@ export const Piece: React.FC<PieceProps> = ({ piece, position }) => {
     return symbols[piece] || '';
   };
 
+  // Create a ref that combines the drag ref
+  const combinedRef = (element: HTMLDivElement | null) => {
+    if (drag) {
+      (drag as Function)(element);
+    }
+  };
+
   return (
     <div
-      ref={dragRef}
+      ref={combinedRef}
       className={`
         text-6xl cursor-move select-none 
         ${isDragging ? 'opacity-30 scale-125' : ''}

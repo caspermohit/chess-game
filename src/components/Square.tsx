@@ -31,7 +31,7 @@ export const Square: React.FC<SquareProps> = ({
   onDrop,
   onPieceSelect 
 }) => {
-  const [{ isOver }, dropRef] = useDrop<DragItem, void, { isOver: boolean }>(() => ({
+  const [{ isOver }, drop] = useDrop<DragItem, void, { isOver: boolean }>(() => ({
     accept: 'piece',
     drop: (item) => {
       if (item.position !== position) {
@@ -57,9 +57,16 @@ export const Square: React.FC<SquareProps> = ({
     return isBlack ? 'bg-green-800' : 'bg-green-200';
   };
 
+  // Create a ref that combines the drop ref
+  const combinedRef = (element: HTMLDivElement | null) => {
+    if (drop) {
+      (drop as Function)(element);
+    }
+  };
+
   return (
     <div
-      ref={dropRef}
+      ref={combinedRef}
       onClick={handleClick}
       className={`
         aspect-square w-full flex items-center justify-center 
